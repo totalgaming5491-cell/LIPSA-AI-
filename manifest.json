@@ -1,0 +1,12 @@
+{
+  "name": "LIPSA AI ULTRA",
+  "short_name": "LIPSA AI",
+  "description": "Your Intelligent World.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070b1f",
+  "theme_color": "#070b1f",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

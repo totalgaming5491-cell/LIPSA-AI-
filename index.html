@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070b1f">
+<title>LIPSA AI ULTRA</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<canvas id="galaxy" aria-hidden="true"></canvas>
+
+<!-- Welcome / auth -->
+<section id="welcome" class="screen active">
+  <div class="card glass center">
+    <canvas id="orbWelcome" class="orb" width="240" height="240"></canvas>
+    <h1 class="grad">LIPSA AI ULTRA</h1>
+    <p class="tag">Your Intelligent World.</p>
+    <form id="authForm">
+      <input id="email" type="email" placeholder="Email" autocomplete="email" required>
+      <input id="password" type="password" placeholder="Password (min 6)" autocomplete="current-password" minlength="6" required>
+      <button class="btn primary" type="submit" id="signIn">Sign in</button>
+      <button class="btn" type="button" id="signUp">Create account</button>
+      <button class="btn" type="button" id="googleBtn">Continue with Google</button>
+    </form>
+    <p id="authMsg" class="msg" role="alert"></p>
+  </div>
+</section>
+
+<!-- App shell -->
+<div id="app" hidden>
+  <header class="topbar glass">
+    <button class="icon" id="menuBtn" aria-label="Menu">☰</button>
+    <strong class="grad">LIPSA AI</strong>
+    <span id="netBadge" class="badge" hidden>Offline</span>
+    <button class="icon" id="newChat" aria-label="New chat">＋</button>
+  </header>
+
+  <nav id="nav" class="glass">
+    <button data-view="chat" class="active">💬 Chat</button>
+    <button data-view="voice">🎙️ Voice</button>
+    <button data-view="planner">🗓️ Planner</button>
+    <button data-view="history">🕘 History</button>
+    <button data-view="memory">🧠 Memory</button>
+    <button data-view="settings">⚙️ Settings</button>
+  </nav>
+
+  <main>
+    <!-- Chat -->
+    <section id="v-chat" class="view active">
+      <div class="chips" id="chips">
+        <button data-p="Explain this topic step by step: ">📚 Study</button>
+        <button data-p="Write and explain code for: ">💻 Code</button>
+        <button data-p="Create 5 practice questions with answers on: ">📝 Practice</button>
+        <button data-p="Make a study plan for: ">🎯 Plan</button>
+      </div>
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <div id="typing" class="typing" hidden><i></i><i></i><i></i></div>
+      <div id="imgPreview" class="preview" hidden><img alt="Selected"><button id="rmImg" class="icon" aria-label="Remove image">✕</button></div>
+      <p id="chatErr" class="msg" role="alert"></p>
+      <form id="chatForm" class="composer glass">
+        <input type="file" id="imgInput" accept="image/*" hidden>
+        <button type="button" class="icon" id="imgBtn" aria-label="Upload image">🖼️</button>
+        <button type="button" class="icon toggle" id="searchBtn" aria-pressed="false" aria-label="Web search">🌐</button>
+        <textarea id="input" rows="1" placeholder="Ask LIPSA anything…"></textarea>
+        <button type="button" class="icon mic" id="micBtn" aria-label="Speak">🎤</button>
+        <button type="submit" class="icon send" id="sendBtn" aria-label="Send">➤</button>
+      </form>
+    </section>
+
+    <!-- Voice -->
+    <section id="v-voice" class="view">
+      <div class="center">
+        <canvas id="orbVoice" class="orb big" width="320" height="320"></canvas>
+        <p id="voiceStatus" class="status">Idle</p>
+        <p id="voiceText" class="voicetext"></p>
+        <div class="row">
+          <button class="btn primary" id="talkBtn">🎤 Tap to talk</button>
+          <button class="btn" id="liveBtn" aria-pressed="false">🔴 Live mode</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="stopBtn">⏹ Stop speaking</button>
+          <button class="btn" id="repeatBtn">🔁 Repeat</button>
+        </div>
+        <p class="hint">Live mode listens automatically after each answer. Tap the orb to interrupt her.</p>
+      </div>
+    </section>
+
+    <!-- Planner -->
+    <section id="v-planner" class="view">
+      <div class="tabs" id="plTabs">
+        <button data-t="task" class="active">Tasks</button><button data-t="reminder">Reminders</button>
+        <button data-t="note">Notes</button><button data-t="goal">Goals</button><button data-t="plan">Study plans</button>
+      </div>
+      <form id="plForm" class="composer glass">
+        <input id="plTitle" placeholder="Add item…" required maxlength="300">
+        <input id="plDue" type="datetime-local" aria-label="Due">
+        <button class="icon send" type="submit" aria-label="Add">＋</button>
+      </form>
+      <ul id="plList" class="list"></ul>
+    </section>
+
+    <!-- History -->
+    <section id="v-history" class="view">
+      <div class="row"><h2>Conversations</h2><button class="btn danger" id="clearHist">Clear all</button></div>
+      <ul id="histList" class="list"></ul>
+    </section>
+
+    <!-- Memory -->
+    <section id="v-memory" class="view">
+      <h2>Memory</h2>
+      <p class="hint">Only what you add here is remembered. It stays private to your account.</p>
+      <form id="memForm" class="composer glass">
+        <input id="memText" placeholder="e.g. I'm preparing for Class 12 physics" maxlength="500" required>
+        <button class="icon send" type="submit" aria-label="Save memory">＋</button>
+      </form>
+      <ul id="memList" class="list"></ul>
+      <button class="btn danger" id="clearMem">Delete all memories</button>
+    </section>
+
+    <!-- Settings -->
+    <section id="v-settings" class="view">
+      <h2>Settings</h2>
+      <div class="card glass form">
+        <label>Your name <input id="sName" maxlength="60"></label>
+        <label>Language
+          <select id="sLang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="or">ଓଡ଼ିଆ</option></select>
+        </label>
+        <label>Theme
+          <select id="sTheme"><option value="dark">Dark</option><option value="light">Light</option></select>
+        </label>
+        <label>Voice <select id="sVoice"></select></label>
+        <label>Speaking speed <input id="sSpeed" type="range" min="0.5" max="2" step="0.1" value="1"></label>
+        <label class="inline"><input id="sMotion" type="checkbox"> Reduce motion</label>
+        <label class="inline"><input id="sAuto" type="checkbox" checked> Speak answers aloud</label>
+        <label class="inline"><input id="sConcise" type="checkbox"> Short answers</label>
+        <button class="btn primary" id="saveSettings">Save</button>
+        <button class="btn" id="micPerm">Check microphone permission</button>
+        <p id="micState" class="hint"></p>
+      </div>
+      <div class="card glass form">
+        <h3>Your data</h3>
+        <button class="btn danger" id="delData">Delete all my data</button>
+        <button class="btn danger" id="delAcct">Delete my account</button>
+        <button class="btn" id="signOut">Sign out</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>
